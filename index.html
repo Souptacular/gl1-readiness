@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GL1 Readiness Checklist</title>
+<meta name="description" content="Check off the action items your organisation needs for MAS Global Layer One (GL1) readiness and get your readiness score.">
+<style>
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --surface-2: #eef2f8;
+    --text: #0f1b2d;
+    --muted: #5b6b82;
+    --border: #dbe2ee;
+    --accent: #1f4fd8;
+    --accent-ink: #ffffff;
+    --critical: #c4372f;
+    --important: #b7791f;
+    --recommended: #2f7d5b;
+    --good: #1f8a5b;
+    --shadow: 0 1px 2px rgba(15,27,45,.06), 0 8px 24px rgba(15,27,45,.06);
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1220;
+      --surface: #111a2c;
+      --surface-2: #17233a;
+      --text: #e7edf7;
+      --muted: #93a3bb;
+      --border: #24324d;
+      --accent: #6b93ff;
+      --accent-ink: #0b1220;
+      --critical: #ff7a70;
+      --important: #f2b45a;
+      --recommended: #5fd0a0;
+      --good: #5fd0a0;
+      --shadow: none;
+      color-scheme: dark;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 0 20px; }
+
+  header.hero { padding: 56px 0 28px; }
+  .eyebrow {
+    display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--accent); background: var(--surface-2); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  h1 { font-size: clamp(30px, 5vw, 44px); line-height: 1.1; margin: 16px 0 12px; letter-spacing: -.02em; }
+  .lede { color: var(--muted); font-size: 18px; max-width: 64ch; margin: 0; }
+  .note {
+    margin-top: 20px; font-size: 14px; color: var(--muted);
+    background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+    padding: 12px 14px; border-radius: 8px;
+  }
+
+  /* Sticky progress bar */
+  .progress {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+  }
+  .progress .wrap { display: flex; align-items: center; gap: 14px; }
+  .bar { flex: 1; height: 8px; background: var(--surface-2); border-radius: 999px; overflow: hidden; border: 1px solid var(--border); }
+  .bar > span { display: block; height: 100%; width: 0; background: var(--accent); transition: width .25s ease; }
+  .progress-label { font-size: 14px; color: var(--muted); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 28px 0 8px; font-size: 13px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+
+  section.cat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    box-shadow: var(--shadow); margin: 18px 0; overflow: hidden;
+  }
+  .cat-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 18px 20px 10px; }
+  .cat-head h2 { font-size: 19px; margin: 0; }
+  .cat-count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .cat-desc { margin: 0; padding: 0 20px 10px; color: var(--muted); font-size: 14px; }
+
+  ul.items { list-style: none; margin: 0; padding: 0; }
+  ul.items li { border-top: 1px solid var(--border); }
+  label.item {
+    display: grid; grid-template-columns: 24px 1fr; gap: 12px;
+    padding: 14px 20px; cursor: pointer; transition: background .15s;
+  }
+  label.item:hover { background: var(--surface-2); }
+  label.item input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--accent); cursor: pointer; }
+  .item-title { font-weight: 600; display: block; }
+  .item-detail { display: block; color: var(--muted); font-size: 14px; margin-top: 2px; }
+  label.item input:checked ~ .item-body .item-title { text-decoration: line-through; text-decoration-color: var(--muted); color: var(--muted); }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+    padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; margin-left: 6px; vertical-align: 2px;
+  }
+  .tag.critical { color: var(--critical); }
+  .tag.important { color: var(--important); }
+  .tag.recommended { color: var(--recommended); }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 28px 0 12px; }
+  button, .btn {
+    font: inherit; font-weight: 600; border-radius: 10px; padding: 12px 20px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text); text-decoration: none;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  button.primary, .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  button:hover, .btn:hover { filter: brightness(1.05); }
+  button:focus-visible, .btn:focus-visible, label.item:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Result */
+  #result {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow);
+    padding: 28px 24px; margin: 24px 0 40px; scroll-margin-top: 64px;
+  }
+  .score-row { display: flex; flex-wrap: wrap; gap: 24px; align-items: center; }
+  .ring { --p: 0; --c: var(--accent); width: 132px; height: 132px; border-radius: 50%; flex: none;
+    background: conic-gradient(var(--c) calc(var(--p) * 1%), var(--surface-2) 0);
+    display: grid; place-items: center; }
+  .ring > div { width: 104px; height: 104px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; text-align: center; }
+  .ring strong { font-size: 32px; line-height: 1; font-variant-numeric: tabular-nums; }
+  .ring small { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .score-text { flex: 1; min-width: 240px; }
+  .score-text h2 { margin: 0 0 6px; font-size: 24px; }
+  .score-text p { margin: 0; color: var(--muted); }
+
+  .gaps h3 { font-size: 16px; margin: 26px 0 8px; }
+  .gaps ul { margin: 0; padding-left: 20px; }
+  .gaps li { margin: 4px 0; }
+  .gaps .none { color: var(--good); font-weight: 600; }
+
+  .cta {
+    margin-top: 28px; padding: 22px; border-radius: 12px;
+    background: var(--surface-2); border: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between;
+  }
+  .cta p { margin: 0; max-width: 52ch; }
+  .cta strong { display: block; font-size: 18px; margin-bottom: 4px; }
+
+  footer { color: var(--muted); font-size: 13px; padding: 24px 0 48px; border-top: 1px solid var(--border); margin-top: 24px; }
+  footer p { margin: 6px 0; }
+
+  @media (max-width: 520px) {
+    header.hero { padding-top: 36px; }
+    .cat-head { flex-direction: column; gap: 2px; }
+    label.item { padding: 14px 16px; }
+    .cat-head, .cat-desc { padding-left: 16px; padding-right: 16px; }
+    .ring { width: 112px; height: 112px; }
+    .ring > div { width: 88px; height: 88px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">MAS · Project Guardian · Global Layer One</span>
+    <h1>Are you ready for Global Layer One?</h1>
+    <p class="lede">Global Layer One (GL1) is the Monetary Authority of Singapore's initiative to build shared, multi-purpose ledger infrastructure for tokenised financial assets. Check off each action item your organisation has completed, then get your readiness score.</p>
+    <p class="note">GL1 is an evolving industry initiative, not a finalised rulebook. Its common principles, policies and standards are still being developed (including through a proposed non-profit GL1 Org). This checklist covers the regulatory, security and governance foundations GL1 participants should expect to meet. It is not legal advice.</p>
+  </div>
+</header>
+
+<div class="progress" aria-hidden="true">
+  <div class="wrap">
+    <div class="bar"><span id="bar-fill"></span></div>
+    <span class="progress-label" id="progress-label">0 of 0 complete</span>
+  </div>
+</div>
+
+<main class="wrap">
+  <div class="legend">
+    <span><span class="tag critical" style="margin:0">Critical</span> 3 points</span>
+    <span><span class="tag important" style="margin:0">Important</span> 2 points</span>
+    <span><span class="tag recommended" style="margin:0">Recommended</span> 1 point</span>
+  </div>
+
+  <form id="checklist" novalidate></form>
+
+  <div class="actions">
+    <button type="button" class="primary" id="score-btn">Get my readiness score</button>
+    <button type="button" id="reset-btn">Reset checklist</button>
+  </div>
+
+  <section id="result" hidden aria-live="polite"></section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>This page is an independent readiness tool and is not affiliated with, or endorsed by, the Monetary Authority of Singapore.</p>
+    <p>Your answers stay in your browser and are not sent anywhere.</p>
+  </div>
+</footer>
+
+<script>
+  const CERTIK_URL = "https://www.certik.com/";
+  const WEIGHTS = { critical: 3, important: 2, recommended: 1 };
+
+  const CATEGORIES = [
+    {
+      id: "reg",
+      title: "Regulatory & licensing",
+      desc: "GL1 is designed for regulated financial institutions, with each jurisdiction keeping its own policy autonomy.",
+      items: [
+        ["reg-entity", "critical", "Confirm you are (or partner with) a regulated financial institution", "Hold the licences required in each jurisdiction where you will issue, trade or settle tokenised assets."],
+        ["reg-classify", "critical", "Classify every tokenised asset you plan to issue", "Decide whether each token is a capital markets product, digital payment token, stored value or something else, and document the reasoning."],
+        ["reg-map", "critical", "Map the Singapore regimes that apply to you", "For example the Securities and Futures Act, Payment Services Act and Financial Services and Markets Act (including the digital token service provider rules)."],
+        ["reg-engage", "important", "Engage MAS or your home regulator early", "Brief supervisors on your GL1 use case, product structure and controls before you go live."]
+      ]
+    },
+    {
+      id: "aml",
+      title: "Identity, access & AML/CFT",
+      desc: "GL1 contemplates a permissioned network where only verified participants can transact.",
+      items: [
+        ["aml-kyc", "critical", "Verify the identity of every wallet holder", "Run KYC/KYB on all participants before they can hold or move assets on the ledger."],
+        ["aml-program", "critical", "Run an AML/CFT programme that meets MAS Notices and FATF standards", "Include risk assessments, customer due diligence and suspicious transaction reporting."],
+        ["aml-travel", "important", "Implement the FATF Travel Rule for token transfers", "Collect and transmit originator and beneficiary information with transfers."],
+        ["aml-monitor", "important", "Monitor on-chain transactions and screen for sanctions", "Screen counterparties and flag suspicious flows in real time."],
+        ["aml-allow", "important", "Enforce access at the token level", "Use allow-lists or verifiable credentials so only eligible wallets can receive or transfer each asset."]
+      ]
+    },
+    {
+      id: "sec",
+      title: "Smart contract & technology security",
+      desc: "Assets on shared infrastructure need code and operations that institutions and regulators can trust.",
+      items: [
+        ["sec-audit", "critical", "Get an independent audit of your smart contracts before deployment", "Re-audit after every material change to contract logic."],
+        ["sec-keys", "critical", "Secure key management and custody", "Use HSMs or MPC, segregate client assets, and document key ceremonies and recovery procedures."],
+        ["sec-trm", "critical", "Align with the MAS Technology Risk Management Guidelines", "Cover system resilience, access control, change management and cyber hygiene."],
+        ["sec-monitor", "important", "Monitor deployed contracts and have an incident response plan", "Detect anomalous activity on-chain and rehearse how you will pause, contain and communicate."],
+        ["sec-pentest", "important", "Penetration-test your off-chain systems", "Include APIs, oracles, bridges, wallets and admin consoles that interact with the ledger."],
+        ["sec-formal", "recommended", "Use formal verification or property-based testing for critical asset logic", "Prove invariants such as total supply, transfer restrictions and redemption rules."]
+      ]
+    },
+    {
+      id: "std",
+      title: "Interoperability & standards",
+      desc: "GL1 aims for assets that work across platforms and jurisdictions through common standards.",
+      items: [
+        ["std-guardian", "important", "Adopt the Project Guardian industry frameworks where they apply", "For example the Guardian Fixed Income Framework and Guardian Funds Framework for tokenised bonds and funds."],
+        ["std-token", "important", "Use widely adopted token standards", "Prefer standards with compliance hooks (transfer restrictions, forced transfers, pausing) over bespoke implementations."],
+        ["std-interop", "recommended", "Plan for interoperability across ledgers", "Design for cross-chain messaging and settlement against tokenised cash or deposits on other networks."],
+        ["std-data", "recommended", "Standardise asset data and metadata", "Use consistent identifiers and disclosures so other participants can run compliance checks automatically."]
+      ]
+    },
+    {
+      id: "gov",
+      title: "Governance, risk & legal",
+      desc: "Business, governance, risk and legal considerations sit alongside technology in the GL1 work.",
+      items: [
+        ["gov-admin", "critical", "Define governance for admin rights and upgrades", "Document who can upgrade, pause or change parameters, with multi-sig approvals and audit trails."],
+        ["gov-legal", "critical", "Get legal opinions on enforceability and settlement finality", "Confirm that on-chain records establish ownership and that settlement is final under governing law."],
+        ["gov-bcp", "important", "Maintain business continuity and operational resilience plans", "Cover ledger outages, key loss, vendor failure and recovery time objectives."],
+        ["gov-vendor", "important", "Manage third-party and outsourcing risk", "Assess node operators, custodians and technology vendors against MAS outsourcing expectations."],
+        ["gov-data", "important", "Comply with data protection rules", "Keep personal data off-chain where possible and meet PDPA and cross-border transfer requirements."],
+        ["gov-track", "recommended", "Track GL1 Org standards as they are published", "Assign an owner to follow GL1 developments and update your controls."]
+      ]
+    }
+  ];
+
+  const STORAGE_KEY = "gl1-checklist-v1";
+  const form = document.getElementById("checklist");
+  const resultEl = document.getElementById("result");
+  const allItems = CATEGORIES.flatMap(c => c.items.map(([id, level, title]) => ({ id, level, title, cat: c.title })));
+
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+  }
+  function saveState(state) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch {}
+  }
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+  }
+
+  function render() {
+    const state = loadState();
+    form.innerHTML = CATEGORIES.map(cat => `
+      <section class="cat" aria-labelledby="h-${cat.id}">
+        <div class="cat-head">
+          <h2 id="h-${cat.id}">${escapeHtml(cat.title)}</h2>
+          <span class="cat-count" data-cat="${cat.id}"></span>
+        </div>
+        <p class="cat-desc">${escapeHtml(cat.desc)}</p>
+        <ul class="items">
+          ${cat.items.map(([id, level, title, detail]) => `
+            <li>
+              <label class="item">
+                <input type="checkbox" name="${id}" data-cat="${cat.id}" ${state[id] ? "checked" : ""}>
+                <span class="item-body">
+                  <span class="item-title">${escapeHtml(title)}<span class="tag ${level}">${level}</span></span>
+                  <span class="item-detail">${escapeHtml(detail)}</span>
+                </span>
+              </label>
+            </li>`).join("")}
+        </ul>
+      </section>`).join("");
+    updateProgress();
+  }
+
+  function checkedSet() {
+    return new Set([...form.querySelectorAll("input:checked")].map(i => i.name));
+  }
+
+  function updateProgress() {
+    const done = checkedSet();
+    document.getElementById("bar-fill").style.width = (done.size / allItems.length * 100) + "%";
+    document.getElementById("progress-label").textContent = `${done.size} of ${allItems.length} complete`;
+    CATEGORIES.forEach(cat => {
+      const n = cat.items.filter(([id]) => done.has(id)).length;
+      form.querySelector(`.cat-count[data-cat="${cat.id}"]`).textContent = `${n} / ${cat.items.length}`;
+    });
+  }
+
+  function band(score, criticalMissing) {
+    if (score >= 90 && criticalMissing === 0) return { title: "GL1-ready foundations", color: "var(--good)", text: "You have the core foundations in place. An independent review can confirm your controls hold up before you go live." };
+    if (score >= 70) return { title: "Nearly there", color: "var(--accent)", text: "Most foundations are in place, but the gaps below could block onboarding or invite regulatory scrutiny." };
+    if (score >= 40) return { title: "Significant gaps", color: "var(--important)", text: "You have started, but several important controls are missing. Prioritise the critical items first." };
+    return { title: "Early stage", color: "var(--critical)", text: "Most GL1 readiness work is still ahead of you. Start with the critical items below." };
+  }
+
+  function showResult() {
+    const done = checkedSet();
+    const total = allItems.reduce((s, i) => s + WEIGHTS[i.level], 0);
+    const earned = allItems.filter(i => done.has(i.id)).reduce((s, i) => s + WEIGHTS[i.level], 0);
+    const score = Math.round(earned / total * 100);
+    const missing = allItems.filter(i => !done.has(i.id));
+    const byLevel = lvl => missing.filter(i => i.level === lvl);
+    const b = band(score, byLevel("critical").length);
+
+    const gapList = (lvl, label) => {
+      const list = byLevel(lvl);
+      if (!list.length) return "";
+      return `<h3>${label} (${list.length})</h3><ul>${list.map(i => `<li>${escapeHtml(i.title)}</li>`).join("")}</ul>`;
+    };
+
+    resultEl.innerHTML = `
+      <div class="score-row">
+        <div class="ring" style="--p:${score};--c:${b.color}" role="img" aria-label="Readiness score ${score} out of 100">
+          <div><div><strong>${score}</strong><small>out of 100</small></div></div>
+        </div>
+        <div class="score-text">
+          <h2>${b.title}</h2>
+          <p>${b.text}</p>
+          <p style="margin-top:8px;font-size:14px">${done.size} of ${allItems.length} action items complete · ${earned} of ${total} weighted points</p>
+        </div>
+      </div>
+      <div class="gaps">
+        ${missing.length
+          ? gapList("critical", "Critical gaps") + gapList("important", "Important gaps") + gapList("recommended", "Recommended next steps")
+          : `<h3>Gaps</h3><p class="none">No open items. Every action item is checked.</p>`}
+      </div>
+      <div class="cta">
+        <p><strong>${missing.length ? "Close your gaps with CertiK" : "Validate your readiness with CertiK"}</strong>
+        CertiK offers smart contract audits, on-chain monitoring and security assessments to help you prepare for GL1.</p>
+        <a class="btn primary" href="${CERTIK_URL}" target="_blank" rel="noopener">Visit certik.com &rarr;</a>
+      </div>`;
+    resultEl.hidden = false;
+    resultEl.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  form.addEventListener("change", e => {
+    if (e.target.type !== "checkbox") return;
+    const state = loadState();
+    state[e.target.name] = e.target.checked;
+    saveState(state);
+    updateProgress();
+    if (!resultEl.hidden) resultEl.hidden = true;
+  });
+  document.getElementById("score-btn").addEventListener("click", showResult);
+  document.getElementById("reset-btn").addEventListener("click", () => {
+    saveState({});
+    resultEl.hidden = true;
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+
+  render();
+</script>
+</body>
+</html>
